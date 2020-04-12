@@ -16,9 +16,8 @@ pipeline {
         // Node app can be linted inside docker after it has been built
 
         stage('Lint Node App') {
-            steps {
-                sh 'npm install --save-dev eslint'
-                sh 'cd app && npm run lint'
+            steps {                
+                sh "eslint 'app/**/*.js?(x)'"
             }
         }
         

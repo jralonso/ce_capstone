@@ -6,8 +6,7 @@ pipeline {
             steps {
                 withAWS(region: 'us-west-2', credentials: 'aws_jenkins') {
                     sh 'echo "EC2 Minikube server creation with AWS user jenkins credentials AKA aws-static in jenkins"'
-                    def response = cfnValidate(file:'minikubestack.yaml')
-                    echo "template description: ${response.description}"
+                    cfnValidate(file:'minikubestack.yaml')
                 }
             }
         }

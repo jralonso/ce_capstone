@@ -58,7 +58,7 @@ pipeline {
             steps {
                 withAWS(region: 'us-west-2', credentials: 'aws_jenkins') {
                     sh 'echo "Deleting Minikube stack"'
-                    cfnDelete(stackSet:'minikube01')
+                    cfnDelete(stack:'minikube01')
                 }
             }
         }

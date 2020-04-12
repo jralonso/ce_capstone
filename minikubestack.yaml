@@ -160,14 +160,15 @@ Resources:
       UserData: 
         Fn::Base64: !Sub |
           #!/bin/bash -ex
-          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1daasdas
           curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
           chmod +x ./kubectl
-          sudo mv ./kubectl /usr/local/bin/kubectl
-          sudo apt-get update &&     sudo apt-get install docker.io -y
+          mv ./kubectl /usr/local/bin/kubectl
+          apt-get update && \
+          sudo apt-get install docker.io -y
           curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
           minikube version
-          apt install conntrack
+          apt-get install conntrack -y
           minikube start --vm-driver=none
           minikube status
           kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:0.1

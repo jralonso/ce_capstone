@@ -13,7 +13,7 @@ pipeline {
                     sh 'echo "Validate Minikube stack cloudformation template"'
                     cfnValidate(file:'minikubestack.yaml')
                     sh 'echo "EC2 Minikube server creation"'
-                    cfnUpdate(stack:'"${STACKNAME}"', file:'minikubestack.yaml', paramsFile:'stackparams.json', timeoutInMinutes:10, tags:['Environment=${ENVIRONMENT}'])
+                    cfnUpdate(stack:'minikube', file:'minikubestack.yaml', paramsFile:'stackparams.json', timeoutInMinutes:10, tags:['Environment=${ENVIRONMENT}'])
                 }
             }
         }

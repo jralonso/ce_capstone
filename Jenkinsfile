@@ -11,9 +11,7 @@ pipeline {
                 }
             }
         }
-    }
-
-    stages {
+        
         stage('Delete Minikube Stack') {
             steps {
                 withAWS(region: 'us-west-2', credentials: 'aws-static') {

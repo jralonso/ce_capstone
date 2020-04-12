@@ -15,18 +15,18 @@ pipeline {
         stage('Build Docker image') {
             
             environment {
-                SERVICE_CREDS = credentials('dockerhub-credentials')
+                DOCKER_CREDS = credentials('dockerhub-credentials')
             }
 
             steps {
-                sh 'echo "Service user is $SERVICE_CREDS_USR"'
-                sh 'echo "Service password is $SERVICE_CREDS_PSW"'
+                sh 'echo "Service user is $DOCKER_CREDS_USR"'
+                sh 'echo "Service password is $DOCKER_CREDS_PSW"'
                 sh 'curl -u $SERVICE_CREDS https://myservice.example.com'
+                sh 'echo "Building docker image"'
+                sh 'docker build -t ${DOCKER_REPO}:${DOCKER_TAG} .'
+                sh 'docker login --username=$DOCKER_CREDS_USR --password=$DOCKER_CREDS_PSW'
+                sh 'docker push ${DOCKER_REPO}:${DOCKER_TAG}'
             }
-            // steps {
-            //     sh 'echo "Building docker image"'
-            //     sh 'docker build -t ${DOCKER_REPO}:${DOCKER_TAG} .'
-            // }
         }
 
         stage('Build Minikube Stack') {

@@ -17,7 +17,7 @@
     },
     {
         "ParameterKey": "MinikubeServerInstanceType",
-        "ParameterValue": "t2.micro"
+        "ParameterValue": "t3a.medium"
     },
     {
         "ParameterKey": "MinikubeServerVolumeSize",

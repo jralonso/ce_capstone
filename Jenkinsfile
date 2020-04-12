@@ -13,9 +13,11 @@ pipeline {
     stages {
 
         stage('Build Docker image') {
+            
             environment {
                 SERVICE_CREDS = credentials('dockerhub-credentials')
             }
+
             steps {
                 sh 'echo "Service user is $SERVICE_CREDS_USR"'
                 sh 'echo "Service password is $SERVICE_CREDS_PSW"'

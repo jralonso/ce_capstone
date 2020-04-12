@@ -21,7 +21,6 @@ pipeline {
             steps {
                 sh 'echo "Service user is $DOCKER_CREDS_USR"'
                 sh 'echo "Service password is $DOCKER_CREDS_PSW"'
-                sh 'curl -u $SERVICE_CREDS https://myservice.example.com'
                 sh 'echo "Building docker image"'
                 sh 'docker build -t ${DOCKER_REPO}:${DOCKER_TAG} .'
                 sh 'docker login --username=$DOCKER_CREDS_USR --password=$DOCKER_CREDS_PSW'

@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     environment {
-        STACKNAME = "minikube-dev01"
-        ENVIRONMENT = "development"
+        STACKNAME = 'minikube'
+        ENVIRONMENT = 'development'
     }
     
     stages {
-        stage('Create Minikube Stack') {
+        stage('Build Minikube Stack') {
             steps {
                 withAWS(region: 'us-west-2', credentials: 'aws_jenkins') {                    
                     sh 'echo "Validate Minikube stack cloudformation template"'

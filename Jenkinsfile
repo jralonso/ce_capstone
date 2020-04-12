@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        STACKNAME = 'minikube'
+        STACKNAME = 'minikube01'
         ENVIRONMENT = 'development'
     }
     
@@ -13,7 +13,7 @@ pipeline {
                     sh 'echo "Validate Minikube stack cloudformation template"'
                     cfnValidate(file:'minikubestack.yaml')
                     sh 'echo "EC2 Minikube server creation"'
-                    cfnUpdate(stack:'minikube', file:'minikubestack.yaml', paramsFile:'stackparams.json', timeoutInMinutes:10, tags:['Environment=${ENVIRONMENT}'])
+                    cfnUpdate(stack:'"${STACKNAME}"', file:'minikubestack.yaml', paramsFile:'stackparams.json', timeoutInMinutes:10, tags:['Environment="${ENVIRONMENT}"'])
                 }
             }
         }
@@ -22,7 +22,7 @@ pipeline {
             steps {
                 withAWS(region: 'us-west-2', credentials: 'aws_jenkins') {
                     sh 'echo "EC2 Minikube server creation with AWS user jenkins credentials AKA aws-static in jenkins"'
-                    cfnDeleteStackSet(stackSet:'minikube-dev')
+                    cfnDeleteStackSet(stackSet:'${STACKNAME}')
                 }
             }
         }

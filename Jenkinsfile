@@ -8,21 +8,36 @@ pipeline {
         ENVIRONMENT = 'development'
         DOCKER_REPO = 'jralonso/hello-nodeapp'
         DOCKER_TAG = '0.1'
+        DOCKER_CREDS = credentials('dockerhub-credentials')
     }
     
     stages {
 
-        stage('Build Docker image') {
-            
-            environment {
-                DOCKER_CREDS = credentials('dockerhub-credentials')
-            }
+        // Node app can be linted inside docker after it has been built
 
+        // stage('Lint Node App') {
+        //     steps {
+                
+        //     }
+        // }
+
+        stage('Lint Dockerfile') {
+            steps {
+                sh 'docker run --rm -i hadolint/hadolint < Dockerfile'
+            }
+        }
+
+        stage('Build Docker image') {
             steps {
                 sh 'echo "Service user is $DOCKER_CREDS_USR"'
                 sh 'echo "Service password is $DOCKER_CREDS_PSW"'
                 sh 'echo "Building docker image"'
                 sh 'docker build -t ${DOCKER_REPO}:${DOCKER_TAG} .'
+            }
+        }        
+        
+        stage('Push image to registry') {
+            steps {
                 sh 'docker login --username=$DOCKER_CREDS_USR --password=$DOCKER_CREDS_PSW'
                 sh 'docker push ${DOCKER_REPO}:${DOCKER_TAG}'
             }
@@ -43,7 +58,7 @@ pipeline {
             steps {
                 withAWS(region: 'us-west-2', credentials: 'aws_jenkins') {
                     sh 'echo "Deleting Minikube stack"'
-                    cfnDeleteStackSet(stackSet:'minikube01')
+                    cfnDelete(stackSet:'minikube01')
                 }
             }
         }

@@ -1,0 +1,181 @@
+Description: |
+  Capstone test project Infraestructure as code using Cloudformation
+
+Parameters:
+  # Main params
+  EnvironmentName:
+    Description: An environment name to be prefixed to all resources
+    Type: String
+    Default: dev01
+
+  # Minikube server specific params
+  MylocalIP: 
+    Description: My local IP
+    Type: String
+    Default: 188.26.223.214/32
+
+  KeyPair:
+    Description: KeyPair file used to access the Bastion hosts
+    Type: String
+    Default: udacityTestEC2
+
+  MinikubeServerAMI: 
+    Description: Web Server AMI
+    Type: String
+    Default: ami-005bdb005fb00e791
+
+  MinikubeServerInstanceType: 
+    Description: Web server instance type
+    Type: String
+    Default: t3a.medium
+  
+  MinikubeServerVolumeSize: 
+    Description: Minikube server root disk capacity
+    Type: Number
+    Default: 10
+
+Resources:
+
+  # #############################################
+  # Nested Stack: Network
+  # #############################################
+
+  #VPC
+  myVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      # We want VPC to provide DNS names for our instances
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+  
+  #Internet Gateway
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+            
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: 
+        Ref: myVPC
+      InternetGatewayId: 
+        Ref: InternetGateway
+
+  # Public Subnets
+  PublicSubnet: 
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref myVPC
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: "10.0.10.0/24"
+      MapPublicIpOnLaunch: true
+      Tags: 
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Name 
+          Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
+  
+  # #######################################
+  # Section Routing
+  # #######################################
+
+  # Public Route Table
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Public routes
+
+  # Route ALL traffic to the IGW and add this Route to the Public Route table
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  # Attach Route Table to Subnets in AZ1 and AZ1
+  # So ALL traffic to internet is sent to IGW
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+    
+
+  # #############################################
+  # Minikube Server
+  # #############################################
+
+  MinikubeServerSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH, PING and TCP 5000 ingress and all traffic from Bastion Host to Internet
+      VpcId: !Ref myVPC
+      SecurityGroupIngress:
+          # Rule for Bastion host
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MylocalIP
+        - IpProtocol: tcp
+          FromPort: 5000
+          ToPort: 5000
+          CidrIp: !Ref MylocalIP
+        - IpProtocol: icmp  
+          FromPort: -1  
+          ToPort: -1  
+          CidrIp: !Ref MylocalIP          
+      SecurityGroupEgress:
+          # ALL egress ports allowed everywhere
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0 
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} SecGrp for Minikube Server Host
+        - Key: Environment
+          Value: !Sub ${EnvironmentName}
+
+  MinikubeServer:
+   Type: AWS::EC2::Instance
+   Properties:
+      KeyName: !Ref KeyPair
+      ImageId:  !Ref MinikubeServerAMI
+      InstanceType: !Ref MinikubeServerInstanceType
+      #IamInstanceProfile: !Ref IAMRoleSSMBastionHostInstanceProfile
+      SecurityGroupIds:
+       - !Ref MinikubeServerSecGroup
+      SubnetId: !Ref PublicSubnet
+      UserData: 
+       Fn::Base64: !Sub |
+         #!/bin/bash -ex
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Minikube Server Host
+        - Key: Environment
+          Value: !Sub ${EnvironmentName}
+
+Outputs:
+
+  MinikubeServerAddress:
+    Description: EC2 Minikube server public DNS address
+    Value: !GetAtt MinikubeServer.PublicDnsName     
+    Export:
+      Name: !Sub ${AWS::StackName}-${EnvironmentName}-Minikube-addr
+
+  MinikubeStackName:
+    Description: EC2 Minikube stack name
+    Value: !Sub ${AWS::StackName}   
+    Export:
+      Name: !Sub ${AWS::StackName}

@@ -1,0 +1,26 @@
+[
+    {
+        "ParameterKey": "EnvironmentName",
+        "ParameterValue": "minikube-dev"
+    },
+    {
+        "ParameterKey": "MylocalIP",
+        "ParameterValue": "188.26.223.214/32"
+    },
+    {
+        "ParameterKey": "KeyPair",
+        "ParameterValue": "udacityTestEC2"
+    },
+    {
+        "ParameterKey": "MinikubeServerAMI",
+        "ParameterValue": "ami-005bdb005fb00e791" 
+    },
+    {
+        "ParameterKey": "MinikubeServerInstanceType",
+        "ParameterValue": "t2.micro"
+    },
+    {
+        "ParameterKey": "MinikubeServerVolumeSize",
+        "ParameterValue": "10"
+    }
+]

@@ -27,7 +27,7 @@ Parameters:
   MinikubeServerInstanceType: 
     Description: Web server instance type
     Type: String
-    Default: t2.micro
+    Default: t2.medium
   
   MinikubeServerVolumeSize: 
     Description: Minikube server root disk capacity
@@ -160,23 +160,23 @@ Resources:
       UserData: 
         Fn::Base64: !Sub |
           #!/bin/bash -ex
-          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-          chmod +x ./kubectl
-          mv ./kubectl /usr/local/bin/kubectl
-          apt-get update
-          apt-get install docker.io -y
-          curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
-          minikube version
-          apt-get install conntrack -y
-          minikube start --vm-driver=none
-          minikube status
-          kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:0.1
-          kubectl get deployments
-          kubectl get pods
-          kubectl get services
-          kubectl expose deployment hello-nodeapp --type=LoadBalancer --port=5000
-          minikube service hello-nodeapp
+          # exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+          # curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+          # chmod +x ./kubectl
+          # mv ./kubectl /usr/local/bin/kubectl
+          # apt-get update
+          # apt-get install docker.io -y
+          # curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+          # minikube version
+          # apt-get install conntrack -y
+          # minikube start --vm-driver=none
+          # minikube status
+          # kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:0.1
+          # kubectl get deployments
+          # kubectl get pods
+          # kubectl get services
+          # kubectl expose deployment hello-nodeapp --type=LoadBalancer --port=5000
+          # minikube service hello-nodeapp
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Minikube Server Host

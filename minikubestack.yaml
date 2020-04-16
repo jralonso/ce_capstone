@@ -127,6 +127,11 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: !Ref MylocalIP
+          # Rule for Jenkins host
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: sg-05b2f370e6f96de5e
         - IpProtocol: tcp
           FromPort: 5000
           ToPort: 5000
@@ -134,7 +139,7 @@ Resources:
         - IpProtocol: icmp  
           FromPort: -1  
           ToPort: -1  
-          CidrIp: !Ref MylocalIP          
+          CidrIp: !Ref MylocalIP  
       SecurityGroupEgress:
           # ALL egress ports allowed everywhere
         - IpProtocol: tcp
@@ -151,7 +156,7 @@ Resources:
    Type: AWS::EC2::Instance
    Properties:
       KeyName: !Ref KeyPair
-      ImageId:  !Ref MinikubeServerAMI
+      ImageId: !Ref MinikubeServerAMI
       InstanceType: !Ref MinikubeServerInstanceType
       #IamInstanceProfile: !Ref IAMRoleSSMBastionHostInstanceProfile
       SecurityGroupIds:
@@ -160,31 +165,26 @@ Resources:
       UserData: 
         Fn::Base64: !Sub |
           #!/bin/bash -ex
-          # exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
-          # curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-          # chmod +x ./kubectl
-          # mv ./kubectl /usr/local/bin/kubectl
-          # apt-get update
-          # apt-get install docker.io -y
-          # curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
-          # minikube version
-          # apt-get install conntrack -y
-          # minikube start --vm-driver=none
-          # minikube status
-          # kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:0.1
-          # kubectl get deployments
-          # kubectl get pods
-          # kubectl get services
-          # kubectl expose deployment hello-nodeapp --type=LoadBalancer --port=5000
-          # minikube service hello-nodeapp
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Minikube Server Host
         - Key: Environment
           Value: !Sub ${EnvironmentName}
 
+  MinikubePublicIP:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: eipalloc-0c81fbcd7406981b8
+      InstanceId: !Ref MinikubeServer
+
 Outputs:
 
+  MinikubePublicFixedIP:
+    Description: EC2 Minikube server public IP address
+    Value: !GetAtt MinikubeServer.PublicIp  
+    Export:
+      Name: !Sub ${AWS::StackName}-${EnvironmentName}-Minikube-IP
+  
   MinikubeServerAddress:
     Description: EC2 Minikube server public DNS address
     Value: !GetAtt MinikubeServer.PublicDnsName     

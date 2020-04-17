@@ -22,5 +22,13 @@
     {
         "ParameterKey": "MinikubeServerVolumeSize",
         "ParameterValue": "10"
+    },
+    {
+        "ParameterKey": "MyJenkinsIP",
+        "ParameterValue": "35.155.137.211/32"
+    },
+    {
+        "ParameterKey": "MinikubeIPAlloc",
+        "ParameterValue": "eipalloc-0481a19a8078ba263"
     }
 ]

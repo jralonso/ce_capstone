@@ -12,12 +12,14 @@ Parameters:
   MylocalIP: 
     Description: My local IP
     Type: String
-    Default: 188.26.223.214/32
+
+  MyJenkinsIP:
+    Description: My Jenkins IP
+    Type: String
 
   KeyPair:
     Description: KeyPair file used to access the Bastion hosts
     Type: String
-    Default: udacityTestEC2
 
   MinikubeServerAMI: 
     Description: Web Server AMI
@@ -33,6 +35,10 @@ Parameters:
     Description: Minikube server root disk capacity
     Type: Number
     Default: 10
+  
+  MinikubeIPAlloc: 
+    Description: Public IP to assign to the environment
+    Type: String
 
 Resources:
 
@@ -131,7 +137,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          SourceSecurityGroupId: sg-05b2f370e6f96de5e
+          CidrIp: !Ref MyJenkinsIP 
         - IpProtocol: tcp
           FromPort: 5000
           ToPort: 5000
@@ -174,10 +180,16 @@ Resources:
   MinikubePublicIP:
     Type: AWS::EC2::EIPAssociation
     Properties:
-      AllocationId: eipalloc-0c81fbcd7406981b8
+      AllocationId: !Ref MinikubeIPAlloc
       InstanceId: !Ref MinikubeServer
 
 Outputs:
+
+  MinikubeInstanceID:
+    Description: EC2 Minikube instance ID
+    Value: !Ref MinikubeServer  
+    Export:
+      Name: !Sub ${AWS::StackName}-${EnvironmentName}-Minikube-ID
 
   MinikubePublicFixedIP:
     Description: EC2 Minikube server public IP address

@@ -16,7 +16,7 @@ pipeline {
         stage('Show branch name') {
             steps {
                 echo 'Pulling...' + env.BRANCH_NAME
-                echo 'Stack name will be ${STACKNAME}'
+                echo "Stack name will be ${STACKNAME}"
             }
         }
 
@@ -58,7 +58,7 @@ pipeline {
                     sh 'echo "Validate Minikube stack cloudformation template"'
                     cfnValidate(file:'minikubestack.yaml')
                     sh 'echo "Starting Minikube stack creation"'
-                    cfnUpdate(stack:'${STACKNAME}', file:'minikubestack.yaml', paramsFile:'stackparams.json', timeoutInMinutes:10, tags:['environment=dev'])
+                    cfnUpdate(stack:"${STACKNAME}", file:"minikubestack.yaml", paramsFile:"stackparams.json", timeoutInMinutes:10, tags:["environment=dev"])
                 }
             }
         }

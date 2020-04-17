@@ -4,7 +4,7 @@ pipeline {
     // to-do: Use variables in stackname and tags
     // to-do: Security Testing with Aqua
     environment {
-        STACKNAME = 'minikube-' + env.BRANCH_NAME
+        STACKNAME = "minikube-${env.BRANCH_NAME}"
         ENVIRONMENT = 'development'
         DOCKER_REPO = 'jralonso/hello-nodeapp'
         DOCKER_TAG = '0.1'

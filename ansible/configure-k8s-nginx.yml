@@ -56,7 +56,7 @@
   - name: Configure reverse proxy (nginx) to use cluster service port
     become: yes
     template:
-      src: ansible/cluster-proxy.conf.tpl
+      src: /ansible/cluster-proxy.conf.tpl
       dest: "{{ nginx_sites }}/default"
   
   - name: restart nginx

@@ -1,9 +1,0 @@
-# Dynamic inentory
-plugin: aws_ec2
-boto_profile: jra-udacity
-# Populate inventory with instances in these regions
-regions:
-  - us-west-2
-filters:
-  # All instances with their `Environment` tag set to `dev`
-  tag:Environment: minikube-dev

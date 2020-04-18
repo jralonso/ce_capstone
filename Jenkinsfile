@@ -68,7 +68,7 @@ pipeline {
             steps {ansiColor('xterm') {
                 ansiblePlaybook( 
                     playbook: "${CREATE_K8S}",
-                    inventory: "${ANSIB_INV}", 
+                    // inventory: "${ANSIB_INV}", 
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [

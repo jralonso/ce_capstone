@@ -68,12 +68,11 @@ pipeline {
             steps {ansiColor('xterm') {
                 ansiblePlaybook( 
                     playbook: "${CREATE_K8S}",
-                    // inventory: "${ANSIB_INV}", 
+                    inventory: "${ANSIB_INV}", 
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
-                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com",
-                        other_variable: "blah2",
+                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com"
                         ]                   
                     ) 
                 }                

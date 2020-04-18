@@ -3,7 +3,7 @@ plugin: aws_ec2
 boto_profile: jra-udacity
 # Populate inventory with instances in these regions
 regions:
-  - "{{ lookup('env','AWS_REGION') }}"
+  - "us-west-2"
 filters:
   # All instances with their `Environment` tag set to SERVER_ENV defined in Jenkinsfile
-  tag:Environment: {{ lookup('env','SERVER_ENV') }}
+  tag:Environment: "minikube-master"

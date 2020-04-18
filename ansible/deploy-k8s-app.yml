@@ -1,6 +1,15 @@
 ---
+- name: Add just created hosts to dynamic in memory inventory
+  hosts: localhost
+  tasks:
+  - name: Add host to group 'just_created' 
+    add_host:
+      name: '{{ target }}'
+      groups: just_created
+    become: yes
 
-- hosts: all
+- name: Create K8s minikube new cluster
+  hosts: just_created
   tasks:
   - name: Create deployment
     shell: /usr/local/bin/kubectl create deployment hello-node --image=gcr.io/hello-minikube-zero-install/hello-node 

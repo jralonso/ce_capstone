@@ -1,7 +1,15 @@
 ---
+- name: Add just created hosts to dynamic in memory inventory
+  hosts: localhost
+  tasks:
+  - name: Add host to group 'just_created'
+    add_host:
+      name: '{{ target }}'
+      groups: just_created
+    become: yes
 
-- hosts: all
-  
+- name: Create K8s minikube new cluster
+  hosts: just_created  
   vars:
     nginx_path: /etc/nginx
     nginx_sites: "{{ nginx_path }}/sites-available"

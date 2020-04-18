@@ -7,7 +7,7 @@
       name: '{{ target }}'
       groups: just_created
 
-- name: Deploy to new servers
+- name: Create K8s minikube new cluster
   hosts: just_created  
   tasks:
   - name: Update apt

@@ -85,7 +85,11 @@ pipeline {
                     playbook: "${DEPLOY_K8S_APP}",
                     inventory: "${ANSIB_INV}", 
                     credentialsId: "${ANSIB_CREDS}",
-                    colorized: true) 
+                    colorized: true,
+                    extraVars: [
+                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com"
+                        ]
+                    ) 
                 }                
             }
         }
@@ -96,7 +100,11 @@ pipeline {
                     playbook: "${CONFIG_K8S_PROXY}",
                     inventory: "${ANSIB_INV}", 
                     credentialsId: "${ANSIB_CREDS}",
-                    colorized: true) 
+                    colorized: true,
+                    extraVars: [
+                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com"
+                        ]
+                    ) 
                 }                
             }
         }

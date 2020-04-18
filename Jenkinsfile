@@ -83,7 +83,7 @@ pipeline {
             steps {ansiColor('xterm') {
                 ansiblePlaybook( 
                     playbook: "${DEPLOY_K8S_APP}",
-                    inventory: "${ANSIB_INV}", 
+                    // inventory: "${ANSIB_INV}", 
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
@@ -98,7 +98,7 @@ pipeline {
             steps {ansiColor('xterm') {
                 ansiblePlaybook( 
                     playbook: "${CONFIG_K8S_PROXY}",
-                    inventory: "${ANSIB_INV}", 
+                    // inventory: "${ANSIB_INV}", 
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [

@@ -47,8 +47,8 @@
 
   - debug: var=port.stdout_lines
 
-  - name: Store cluster service port in local file
-    local_action: copy content={{ port.stdout_lines }} dest=/home/ubuntu/cluster-service-port
+  # - name: Store cluster service port in local file
+  #   local_action: copy content={{ port.stdout_lines }} dest=cluster-service-port
 
   - set_fact:
       cluster_port: "{{ port.stdout }}"
@@ -56,7 +56,7 @@
   - name: Configure reverse proxy (nginx) to use cluster service port
     become: yes
     template:
-      src: cluster-proxy.conf.tpl
+      src: ansible/cluster-proxy.conf.tpl
       dest: "{{ nginx_sites }}/default"
   
   - name: restart nginx

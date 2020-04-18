@@ -1,6 +1,14 @@
 ---
+- name: Add just created hosts to dynamic in memory inventory
+  hosts: localhost
+  tasks:
+  - name: Add host to group 'just_created' with variable foo=42
+    add_host:
+      name: '{{ target }}'
+      groups: just_created
 
-- hosts: all
+- name: Deploy to new servers
+  hosts: just_created  
   tasks:
   - name: Update apt
     apt:

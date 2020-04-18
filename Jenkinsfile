@@ -70,8 +70,12 @@ pipeline {
                     playbook: "${CREATE_K8S}",
                     inventory: "${ANSIB_INV}", 
                     credentialsId: "${ANSIB_CREDS}",
-                    extraVars: {'target':'ec2-52-12-58-128.us-west-2.compute.amazonaws.com','other_variable':'foo'},
-                    colorized: true) 
+                    colorized: true,
+                    extraVars: [
+                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com",
+                        other_variable: "blah2",
+                        ]                   
+                    ) 
                 }                
             }
         }

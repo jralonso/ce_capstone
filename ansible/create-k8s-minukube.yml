@@ -1,0 +1,58 @@
+---
+
+- hosts: all
+  tasks:
+  - name: Update apt
+    apt:
+      update_cache: yes
+    become: yes
+
+  - name: Download kubectl
+    get_url:
+      url: https://storage.googleapis.com/kubernetes-release/release/v1.18.1/bin/linux/amd64/kubectl
+      dest: /home/ubuntu/kubectl
+      mode: '0755'
+
+  - name: Move kubectl to /usr/local/bin
+    command: mv /home/ubuntu/kubectl /usr/local/bin/kubectl
+    become: yes
+
+  - name: Update apt again
+    apt:
+      update_cache: yes
+    become: yes
+
+  - name: Installing docker
+    apt:
+      name: docker.io
+      state: present
+    become: yes
+
+  - name: Download minikube
+    get_url:
+      url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+      dest: /home/ubuntu/minikube
+      mode: '0755'
+
+  - name: Move minikube to /usr/local/bin
+    command: mv /home/ubuntu/minikube /usr/local/bin/minikube
+    become: yes
+
+  - name: Installing conntrack
+    apt:
+      name: conntrack
+      state: present
+    become: yes
+
+  - name: Test minikube by showing version
+    shell: /usr/local/bin/minikube version
+    register: minikube
+
+  - debug: var=minikube.stdout_lines
+
+  - name: Start K8s testing environment with Minikube 
+    shell: /usr/local/bin/minikube start --vm-driver=none
+    register: minikube
+    become: yes
+
+  - debug: var=minikube.stdout_lines

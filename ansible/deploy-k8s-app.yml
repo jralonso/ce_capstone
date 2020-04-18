@@ -1,0 +1,31 @@
+---
+
+- hosts: all
+  tasks:
+  - name: Create deployment
+    shell: /usr/local/bin/kubectl create deployment hello-node --image=gcr.io/hello-minikube-zero-install/hello-node 
+    register: kubectl
+    become: yes
+
+  - debug: var=kubectl.stdout_lines
+
+  - name: Expose deployment
+    shell: /usr/local/bin/kubectl expose deployment hello-node --type=LoadBalancer --port=8080
+    register: kubectl
+    become: yes
+
+  - debug: var=kubectl.stdout_lines
+
+  - name: Get services
+    shell: /usr/local/bin/kubectl get services
+    register: kubectl
+    become: yes
+
+  - debug: var=kubectl.stdout_lines
+
+  - name: Publish service
+    shell: /usr/local/bin/minikube service hello-node
+    register: minikube 
+    become: yes
+
+  - debug: var=kubectl.stdout_lines

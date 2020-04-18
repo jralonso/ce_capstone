@@ -1,0 +1,58 @@
+---
+
+- hosts: all
+  
+  vars:
+    nginx_path: /etc/nginx
+    nginx_sites: "{{ nginx_path }}/sites-available"
+
+  tasks:
+  - name: Install nginx latest version
+    become: yes
+    apt: 
+      name: nginx
+      state: latest
+
+  - name: Start nginx
+    become: yes
+    systemd:
+      name: nginx
+      state: started
+
+  - name: Enable nginx on instance restart
+    become: yes
+    systemd:
+      name: nginx
+      enabled: yes
+
+  - name: Describe deployment
+    shell: kubectl describe deployments
+    register: desc
+    become: yes
+
+  - debug: var=desc.stdout_lines
+
+  - name: Get exposed host port
+    shell: "kubectl get services/hello-node -o go-template='{{ '{{' }}(index .spec.ports 0).nodePort{{ '}}' }}'"
+    register: port
+    become: yes
+
+  - debug: var=port.stdout_lines
+
+  - name: Store cluster service port in local file
+    local_action: copy content={{ port.stdout_lines }} dest=/home/ubuntu/cluster-service-port
+
+  - set_fact:
+      cluster_port: "{{ port.stdout }}"
+     
+  - name: Configure reverse proxy (nginx) to use cluster service port
+    become: yes
+    template:
+      src: cluster-proxy.conf.tpl
+      dest: "{{ nginx_sites }}/default"
+  
+  - name: restart nginx
+    become: yes
+    service:
+      name: nginx
+      state: restarted

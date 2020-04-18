@@ -138,14 +138,6 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: !Ref MyJenkinsIP 
-        - IpProtocol: tcp
-          FromPort: 5000
-          ToPort: 5000
-          CidrIp: !Ref MylocalIP
-        - IpProtocol: icmp  
-          FromPort: -1  
-          ToPort: -1  
-          CidrIp: !Ref MylocalIP  
       SecurityGroupEgress:
           # ALL egress ports allowed everywhere
         - IpProtocol: tcp
@@ -173,9 +165,7 @@ Resources:
           #!/bin/bash -ex
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Minikube Server Host
-        - Key: Environment
-          Value: !Sub ${EnvironmentName}
+          Value: !Sub ${AWS::StackName} Minikube Server Host (Ubuntu 18.04)       
 
   MinikubePublicIP:
     Type: AWS::EC2::EIPAssociation

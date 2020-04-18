@@ -1,16 +1,24 @@
 pipeline {
     agent any
 
-    // to-do: Use variables in stackname and tags
     // to-do: Security Testing with Aqua
     environment {
         STACKNAME   = "minikube-${env.BRANCH_NAME}"
-        ENVIRONMENT = 'development'
-        DOCKER_REPO = 'jralonso/hello-nodeapp'
-        DOCKER_TAG  = '0.1'
+        SERVER_ENV  = "minikube-${env.BRANCH_NAME}"        
+        DOCKER_REPO = "jralonso/hello-nodeapp"
+        DOCKER_TAG  = "${env.BRANCH_NAME}-latest"
         DOCKER_CREDS = credentials('dockerhub-credentials')
-        CFN_MINIKUBE = 'minikubestack.yaml'
-        CFN_PARAMS   = 'stackparams.json'
+        AWS_REGION   = "us-west-2"
+        AWS_CREDS    = "aws_jenkins"
+        CFN_PATH     = "cloudformation"
+        CFN_MINIKUBE = "${CFN_PATH}/network-servers-stack.yml"
+        CFN_PARAMS   = "${CFN_PATH}/stack-params.json"
+        ANSIB_PATH = "ansible"
+        ANSIB_CREDS = "aws_ansible"
+        ANSIB_INV  = "${ANSIBLE_PATH}/ec2-servers-inventory.yml"
+        CREATE_K8S       = "${ANSIBLE_PATH}/create-k8s-minukube.yml"
+        DEPLOY_K8S_APP   = "${ANSIBLE_PATH}/deploy-k8s-app"
+        CONFIG_K8S_PROXY = "${ANSIBLE_PATH}/configure-k8s-nginx.yml"
     }
     
     stages {
@@ -45,14 +53,47 @@ pipeline {
             }
         }
 
-        stage('Build Minikube Stack') {
+        stage('Create/Update Network and Server for the environment') {
             steps {
-                withAWS(region: 'us-west-2', credentials: 'aws_jenkins') {                    
+                withAWS(region: "${AWS_REGION}", credentials: "${AWS_CREDS}") {                    
                     sh 'echo "Validate Minikube stack cloudformation template"'
-                    cfnValidate(file:'minikubestack.yaml')
+                    cfnValidate(file:"${CFN_MINIKUBE}")
                     sh 'echo "Starting Minikube stack creation"'
-                    cfnUpdate(stack:"${STACKNAME}", file:"${CFN_MINIKUBE}", paramsFile:"${CFN_PARAMS}", timeoutInMinutes:10, tags:["environment=dev"])
+                    cfnUpdate(stack:"${STACKNAME}", file:"${CFN_MINIKUBE}", paramsFile:"${CFN_PARAMS}", timeoutInMinutes:10, tags:["Environment=${SERVER_ENV}"])
                 }
+            }
+        }
+
+        stage('Create a Kubernetes Cluster (Minikube)') {
+            steps {ansiColor('xterm') {
+                ansiblePlaybook( 
+                    playbook: "${CREATE_K8S}",
+                    inventory: "${ANSIB_INV}", 
+                    credentialsId: "${ANSIB_CREDS}",
+                    colorized: true) 
+                }                
+            }
+        }
+
+        stage('Deploy app to K8s Minikube') {
+            steps {ansiColor('xterm') {
+                ansiblePlaybook( 
+                    playbook: "${DEPLOY_K8S_APP}",
+                    inventory: "${ANSIB_INV}", 
+                    credentialsId: "${ANSIB_CREDS}",
+                    colorized: true) 
+                }                
+            }
+        }
+
+        stage('Configure K8s ngins proxy') {
+            steps {ansiColor('xterm') {
+                ansiblePlaybook( 
+                    playbook: "${CONFIG_K8S_PROXY}",
+                    inventory: "${ANSIB_INV}", 
+                    credentialsId: "${ANSIB_CREDS}",
+                    colorized: true) 
+                }                
             }
         }
         

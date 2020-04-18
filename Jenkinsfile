@@ -15,10 +15,10 @@ pipeline {
         CFN_PARAMS   = "${CFN_PATH}/stack-params.json"
         ANSIB_PATH = "ansible"
         ANSIB_CREDS = "aws_ansible"
-        ANSIB_INV  = "${ANSIBLE_PATH}/ec2-servers-inventory.yml"
-        CREATE_K8S       = "${ANSIBLE_PATH}/create-k8s-minukube.yml"
-        DEPLOY_K8S_APP   = "${ANSIBLE_PATH}/deploy-k8s-app"
-        CONFIG_K8S_PROXY = "${ANSIBLE_PATH}/configure-k8s-nginx.yml"
+        ANSIB_INV  = "${ANSIB_PATH}/ec2-servers-inventory.yml"
+        CREATE_K8S       = "${ANSIB_PATH}/create-k8s-minukube.yml"
+        DEPLOY_K8S_APP   = "${ANSIB_PATH}/deploy-k8s-app"
+        CONFIG_K8S_PROXY = "${ANSIB_PATH}/configure-k8s-nginx.yml"
     }
     
     stages {

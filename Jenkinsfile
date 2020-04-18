@@ -17,7 +17,7 @@ pipeline {
         ANSIB_CREDS = "aws_ansible"
         ANSIB_INV  = "${ANSIB_PATH}/ec2-servers-inventory.yml"
         CREATE_K8S       = "${ANSIB_PATH}/create-k8s-minukube.yml"
-        DEPLOY_K8S_APP   = "${ANSIB_PATH}/deploy-k8s-app"
+        DEPLOY_K8S_APP   = "${ANSIB_PATH}/deploy-k8s-app.yml"
         CONFIG_K8S_PROXY = "${ANSIB_PATH}/configure-k8s-nginx.yml"
     }
     

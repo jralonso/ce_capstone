@@ -72,7 +72,7 @@
       minikube_server: "{{ my_stack.cloudformation[stack_name].stack_outputs.MinikubeServerAddress }}"
      
   - name: Configure front reverse proxy
-    # become: yes
+    become: yes
     template:
       src: front-proxy.conf.tpl
       dest: "{{ nginx_sites }}/default"

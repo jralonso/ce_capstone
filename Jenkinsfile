@@ -7,7 +7,7 @@ pipeline {
         SERVER_ENV  = "minikube-${env.BRANCH_NAME}"        
         DOCKER_APP = "jralonso/hello-nodeapp"
         DOCKER_TAG  = "0.2"
-        DOCKER_IMG  = "${DOCKER_APP}/${DOCKER_TAG}"
+        DOCKER_IMG  = "${DOCKER_APP}:${DOCKER_TAG}"
         DOCKER_CREDS = credentials('dockerhub-credentials')
         AWS_REGION   = "us-west-2"
         AWS_CREDS    = "aws_jenkins"
@@ -112,7 +112,8 @@ pipeline {
                     colorized: true,
                     extraVars: [
                         stack_name: "${STACK_NAME}",
-                        image: "${DOCKER_IMG}"
+                        image: "${DOCKER_IMG}",
+                        app_name: "${APP_NAME}"
                         ]
                     ) 
                 }                
@@ -127,7 +128,8 @@ pipeline {
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
-                        stack_name: "${STACK_NAME}"
+                        stack_name: "${STACK_NAME}",
+                        app_name: "${APP_NAME}"
                         ]
                     ) 
                 }                

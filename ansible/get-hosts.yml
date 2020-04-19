@@ -1,3 +1,4 @@
+# to-do: Make it fail if cfn does not exist
 ---
 # Get cloudformation info
 - name: Get cloudformation info from stack
@@ -7,7 +8,7 @@
       stack_name: '{{ stack_name }}'
       all_facts: yes
     register: my_stack
-    failed_when: cloudformation['{{ stack_name }}'] is undefined
+    # failed_when: cloudformation['{{ stack_name }}'] is undefined
 
   - debug:
       msg: "{{ my_stack.cloudformation[stack_name].stack_outputs }}"

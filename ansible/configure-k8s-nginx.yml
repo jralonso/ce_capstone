@@ -66,10 +66,10 @@
     nginx_path: /etc/nginx
     nginx_sites: "{{ nginx_path }}/sites-available"
   hosts: localhost  
-  
+
   tasks:
   - set_fact:
-    minikube_server: "{{ new_server }}"
+      minikube_server: "{{ new_server }}"
      
   - name: Configure front reverse proxy
     become: yes

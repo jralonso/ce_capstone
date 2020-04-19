@@ -3,8 +3,9 @@ pipeline {
 
     // to-do: Security Testing with Aqua
     environment {
-        STACK_NAME   = "minikube-${env.BRANCH_NAME}"
-        SERVER_ENV  = "minikube-${env.BRANCH_NAME}"        
+        APP_NAME   = "hello-nodeapp"
+        STACK_NAME = "minikube-${env.BRANCH_NAME}"
+        SERVER_ENV = "minikube-${env.BRANCH_NAME}"        
         DOCKER_APP = "jralonso/hello-nodeapp"
         DOCKER_TAG  = "0.2"
         DOCKER_IMG  = "${DOCKER_APP}:${DOCKER_TAG}"

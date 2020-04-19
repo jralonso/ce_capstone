@@ -2,15 +2,6 @@
 - name: Get cloudformation info from stack
   import_playbook: get-hosts.yml
 
-# - name: Add just created hosts to dynamic in memory inventory
-#   hosts: localhost
-#   tasks:
-#   - name: Add host to group 'just_created' 
-#     add_host:
-#       name: '{{ target }}'
-#       groups: just_created
-#     become: yes
-
 # Create K8s deployment
 - name: Create K8s minikube new deployment
   hosts: just_created
@@ -19,6 +10,7 @@
     shell: /usr/local/bin/kubectl create deployment hello-node --image=gcr.io/hello-minikube-zero-install/hello-node 
     register: kubectl
     become: yes
+    # when: kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}' 
 
   - debug: var=kubectl.stdout_lines
 

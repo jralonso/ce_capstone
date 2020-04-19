@@ -9,6 +9,7 @@
   - name: Check if app is deployed
     shell: kubectl get deployment hello-nodeapp
     register: deployed
+    become: yes
     ignore_errors: yes
   
   - debug: var=deployed.stdout_lines

@@ -1,7 +1,7 @@
 ---
 - name: Get cloudformation info from stack
-  include: get-hosts.yml
-  
+  import_playbook: get-hosts.yml
+
 # - name: Add just created hosts to dynamic in memory inventory
 #   hosts: localhost
 #   tasks:

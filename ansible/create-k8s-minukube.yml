@@ -1,6 +1,6 @@
 ---
 - name: Get cloudformation info from stack
-  include: get-hosts.yml
+  import_playbook: get-hosts.yml
 
 # # Get cloudformation info
 # - name: Get cloudformation info from stack

@@ -4,6 +4,6 @@ server {
         #server_name _;
 
         location / {
-                proxy_pass {{ minikube_server }};
+                proxy_pass http://{{ minikube_server }};
         }
 }

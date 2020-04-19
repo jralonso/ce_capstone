@@ -71,7 +71,7 @@ pipeline {
                 // sh 'echo "Service user is $DOCKER_CREDS_USR"'
                 // sh 'echo "Service password is $DOCKER_CREDS_PSW"'
                 sh 'docker login --username=$DOCKER_CREDS_USR --password=$DOCKER_CREDS_PSW'
-                sh 'docker push ${DOCKER_IMG}'
+                sh 'docker push ${DOCKER_APP}:${DOCKER_TAG}'
             }
         }
 

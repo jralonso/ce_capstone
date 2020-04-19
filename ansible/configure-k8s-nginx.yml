@@ -59,3 +59,22 @@
     service:
       name: nginx
       state: restarted
+
+# Configure nginx reverse proxy
+- name: Configure nginx front proxy
+  hosts: localhost  
+  tasksk:
+  - set_fact:
+    minikube_server: "{{ new_server }}"
+     
+  - name: Configure front reverse proxy
+    become: yes
+    template:
+      src: front-proxy.conf.tpl
+      dest: "{{ nginx_sites }}/default"
+  
+  - name: restart nginx
+    become: yes
+    service:
+      name: nginx
+      state: restarted

@@ -12,7 +12,7 @@
     become: yes
     ignore_errors: yes
   
-  - debug: var=is_deployed.stdout_lines
+  # - debug: var=is_deployed.stdout_lines
   - debug: var=is_deployed
 
   - name: Create deployment (only if was not deployed)
@@ -21,7 +21,7 @@
     become: yes
     when: "'NotFound' in is_deployed.stderr"
 
-  - debug: var=create_deployment.stdout_lines  
+  # - debug: var=create_deployment.stdout_lines  
   - debug: var=create_deployment
 
   - name: Update deployment (only if was deployed)
@@ -31,8 +31,14 @@
     when: "'NotFound' not in is_deployed.stderr"
     #ignore_errors: yes
 
-  - debug: var=update_deployment.stdout_lines  
   - debug: var=update_deployment
+
+  - name: Escale replicas to 4
+    shell: kubectl scale deployment hello-nodeapp --replicas=4
+    register: scale_deployment
+    become: yes    
+
+  - debug: var=scale_deployment
 
   - name: Expose deployment (only if was not deployed)
     shell: /usr/local/bin/kubectl expose deployment hello-nodeapp --type=LoadBalancer --port=5000

@@ -13,28 +13,26 @@
     ignore_errors: yes
   
   - debug: var=deployed.stdout_lines
-
   - debug: var=deployed
 
   - name: Create deployment
     shell: /usr/local/bin/kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:master-latest
-    register: deployment
+    register: create_deployment
     become: yes
-    ignore_errors: yes
+    when: "'FAILED' in deployed.stderr"
 
-  - debug: var=deployment.stdout_lines
-  
-  - debug: var=deployment
+  - debug: var=create_deployment.stdout_lines  
+  - debug: var=create_deployment
 
-  # - name: Update deployment
-  #   shell: /usr/local/bin/kubectl set image deployments/hello-nodeapp hello-nodeapp=jralonso/hello-nodeapp:master-latest
-  #   register: deployment
-  #   become: yes
-  #   ignore_errors: yes
+  - name: Update deployment
+    shell: /usr/local/bin/kubectl set image deployments/hello-nodeapp hello-nodeapp=jralonso/hello-nodeapp:master-latest
+    register: update_deployment
+    become: yes
+    when: "'FAILED' not in deployed.stderr"
+    #ignore_errors: yes
 
-  # - debug: var=deployment.stdout_lines
-  
-  # - debug: var=deployment
+  - debug: var=update_deployment.stdout_lines  
+  - debug: var=update_deployment
 
   - name: Expose deployment
     shell: /usr/local/bin/kubectl expose deployment hello-nodeapp --type=LoadBalancer --port=5000

@@ -1,4 +1,14 @@
 ---
+# Get cloudformation info
+- name: Get cloudformation info from stack
+  cloudformation_info:
+    stack_name: "{{ stack_name }}"
+  register: my_stack
+
+- debug:
+    msg: "{{ my_stack.cloudformation[stack_name].stack_outputs }}"
+
+# Add found hosts to inventory
 - name: Add just created hosts to dynamic in memory inventory
   hosts: localhost
   tasks:
@@ -7,6 +17,7 @@
       name: '{{ target }}'
       groups: just_created
 
+# Create K8s cluster
 - name: Create K8s minikube new cluster
   hosts: just_created  
   tasks:

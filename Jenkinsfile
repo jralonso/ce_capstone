@@ -3,7 +3,7 @@ pipeline {
 
     // to-do: Security Testing with Aqua
     environment {
-        STACKNAME   = "minikube-${env.BRANCH_NAME}"
+        STACK_NAME   = "minikube-${env.BRANCH_NAME}"
         SERVER_ENV  = "minikube-${env.BRANCH_NAME}"        
         DOCKER_REPO = "jralonso/hello-nodeapp"
         DOCKER_TAG  = "${env.BRANCH_NAME}-latest"
@@ -59,7 +59,7 @@ pipeline {
                     sh 'echo "Validate Minikube stack cloudformation template"'
                     cfnValidate(file:"${CFN_MINIKUBE}")
                     sh 'echo "Starting Minikube stack creation"'
-                    cfnUpdate(stack:"${STACKNAME}", file:"${CFN_MINIKUBE}", paramsFile:"${CFN_PARAMS}", timeoutInMinutes:10, tags:["Environment=${SERVER_ENV}"])
+                    cfnUpdate(stack:"${STACK_NAME}", file:"${CFN_MINIKUBE}", paramsFile:"${CFN_PARAMS}", timeoutInMinutes:10, tags:["Environment=${SERVER_ENV}"])
                 }
             }
         }
@@ -72,7 +72,8 @@ pipeline {
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
-                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com"
+                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com",
+                        stack_name: "${STACK_NAME}"
                         ]                   
                     ) 
                 }                
@@ -87,7 +88,8 @@ pipeline {
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
-                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com"
+                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com",
+                        stack_name: "${STACK_NAME}"
                         ]
                     ) 
                 }                
@@ -102,7 +104,8 @@ pipeline {
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
-                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com"
+                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com",
+                        stack_name: "${STACK_NAME}"
                         ]
                     ) 
                 }                

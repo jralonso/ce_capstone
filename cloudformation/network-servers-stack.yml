@@ -43,9 +43,9 @@ Parameters:
 Mappings:
   IPallocations:
     allocations:
-      green: eipalloc-0481a19a8078ba263
+      green: eipalloc-0c81fbcd7406981b8
       blue: eipalloc-0deb8255314477a44
-      master: eipalloc-0c81fbcd7406981b8
+      master: eipalloc-0481a19a8078ba263
 
 Resources:
 

@@ -1,14 +1,18 @@
 ---
-- name: Add just created hosts to dynamic in memory inventory
-  hosts: localhost
-  tasks:
-  - name: Add host to group 'just_created' 
-    add_host:
-      name: '{{ target }}'
-      groups: just_created
-    become: yes
+- name: Get cloudformation info from stack
+  include: get-hosts.yml
+  
+# - name: Add just created hosts to dynamic in memory inventory
+#   hosts: localhost
+#   tasks:
+#   - name: Add host to group 'just_created' 
+#     add_host:
+#       name: '{{ target }}'
+#       groups: just_created
+#     become: yes
 
-- name: Create K8s minikube new cluster
+# Create K8s deployment
+- name: Create K8s minikube new deployment
   hosts: just_created
   tasks:
   - name: Create deployment

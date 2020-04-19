@@ -3,9 +3,18 @@
   import_playbook: get-hosts.yml
 
 # Create K8s deployment
-- name: Create K8s minikube new deployment
+- name: Create or redeploy on K8s minikube 
   hosts: just_created
   tasks:
+  - name: Check if app is deployed
+    shell: kubectl get deployment hello-node
+    register: deployed
+    ignore_errors: yes
+  
+  - debug: var=deployed.stdout_lines
+
+  - debug: var=deployed
+
   - name: Create deployment
     shell: /usr/local/bin/kubectl create deployment hello-node --image=gcr.io/hello-minikube-zero-install/hello-node 
     register: kubectl

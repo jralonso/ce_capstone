@@ -10,7 +10,7 @@ const HOST = '0.0.0.0';
 // App
 const app = express();
 app.get('/', (req, res) => {
-  res.send('<html><body><h1>Hello ' + req.query.name + ' </h1> | Pod: ' + process.env.HOSTNAME);
+  res.send('<html><body><h1>Hello ' + req.query.name + ' </h1>');
 });
 
 //app.get('/server', (req, res) => {

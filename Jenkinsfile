@@ -72,7 +72,6 @@ pipeline {
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
-                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com",
                         stack_name: "${STACK_NAME}"
                         ]                   
                     ) 
@@ -88,7 +87,6 @@ pipeline {
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
-                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com",
                         stack_name: "${STACK_NAME}"
                         ]
                     ) 
@@ -104,7 +102,6 @@ pipeline {
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
-                        target: "ec2-52-12-58-128.us-west-2.compute.amazonaws.com",
                         stack_name: "${STACK_NAME}"
                         ]
                     ) 

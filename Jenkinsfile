@@ -25,6 +25,7 @@ pipeline {
 
         stage('Update cfn param file with green/blue branch') {
             steps {
+                sh 'echo "Update cfn param file with green/blue branch"'
                 contentReplace(
                     configs: [
                         variablesReplaceConfig(
@@ -78,6 +79,23 @@ pipeline {
 
         stage('Create/Update Network and Server for the environment') {
             steps {
+                // sh 'echo "Update cfn param file with green/blue branch"'
+                // contentReplace(
+                //     configs: [
+                //         variablesReplaceConfig(
+                //             configs: [
+                //                 variablesReplaceItemConfig( 
+                //                     name: 'GREENBLUE',
+                //                     value: "${env.BRANCH_NAME}"
+                //                 )
+                //             ],
+                //             fileEncoding: 'UTF-8', 
+                //             filePath: "${CFN_PARAMS}", 
+                //             variablesPrefix: '#{', 
+                //             variablesSuffix: '}#'
+                //         )
+                //     ]
+                // )
                 withAWS(region: "${AWS_REGION}", credentials: "${AWS_CREDS}") {                    
                     sh 'echo "Validate Minikube stack cloudformation template"'
                     cfnValidate(file:"${CFN_MINIKUBE}")

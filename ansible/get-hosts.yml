@@ -1,0 +1,27 @@
+---
+# Get cloudformation info
+- name: Get cloudformation info from stack
+  hosts: localhost
+  tasks:
+  - cloudformation_info:
+      stack_name: '{{ stack_name }}'
+      all_facts: yes
+    register: my_stack
+
+  - debug:
+      msg: "{{ my_stack.cloudformation[stack_name].stack_outputs }}"
+  
+  - debug:
+      msg: "Minikube server: {{ my_stack.cloudformation[stack_name].stack_outputs.MinikubeServerAddress }}"
+
+  - debug:
+      msg: '{{ target }}'
+
+# Add found hosts to inventory
+- name: Add just created hosts to dynamic in memory inventory
+  hosts: localhost
+  tasks:
+  - name: Add host to group 'just_created' with variable foo=42
+    add_host:
+      name: "{{ my_stack.cloudformation[stack_name].stack_outputs.MinikubeServerAddress }}"
+      groups: just_created

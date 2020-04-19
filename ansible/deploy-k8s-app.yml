@@ -8,36 +8,37 @@
   tasks:
   - name: Check if app is deployed
     shell: kubectl get deployment hello-nodeapp
-    register: deployed
+    register: is_deployed
     become: yes
     ignore_errors: yes
   
-  - debug: var=deployed.stdout_lines
-  - debug: var=deployed
+  - debug: var=is_deployed.stdout_lines
+  - debug: var=is_deployed
 
-  - name: Create deployment
-    shell: /usr/local/bin/kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:master-latest
+  - name: Create deployment (only if was not deployed)
+    shell: kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:master-latest
     register: create_deployment
     become: yes
-    when: "'FAILED' in deployed.stderr"
+    when: "'FAILED' in is_deployed.stderr"
 
   - debug: var=create_deployment.stdout_lines  
   - debug: var=create_deployment
 
-  - name: Update deployment
-    shell: /usr/local/bin/kubectl set image deployments/hello-nodeapp hello-nodeapp=jralonso/hello-nodeapp:master-latest
+  - name: Update deployment (only if was deployed)
+    shell: kubectl set image deployments/hello-nodeapp hello-nodeapp=jralonso/hello-nodeapp:master-latest
     register: update_deployment
     become: yes
-    when: "'FAILED' not in deployed.stderr"
+    when: "'FAILED' not in is_deployed.stderr"
     #ignore_errors: yes
 
   - debug: var=update_deployment.stdout_lines  
   - debug: var=update_deployment
 
-  - name: Expose deployment
+  - name: Expose deployment (only if was not deployed)
     shell: /usr/local/bin/kubectl expose deployment hello-nodeapp --type=LoadBalancer --port=5000
     register: expose
     become: yes
+    when: "'FAILED' in is_deployed.stderr"
 
   - debug: var=expose.stdout_lines
 

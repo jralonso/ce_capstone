@@ -12,7 +12,7 @@
       msg: "{{ my_stack.cloudformation[stack_name].stack_outputs }}"
   
   - debug:
-      msg: "{{ my_stack.cloudformation[stack_name].stack_outputs.MinikubeServerAddress }}"
+      msg: "Minikube server: {{ my_stack.cloudformation[stack_name].stack_outputs.MinikubeServerAddress }}"
 
 # Add found hosts to inventory
 - name: Add just created hosts to dynamic in memory inventory
@@ -20,7 +20,7 @@
   tasks:
   - name: Add host to group 'just_created' with variable foo=42
     add_host:
-      name: '{{ my_stack.cloudformation[stack_name].stack_outputs }}'
+      name: '{{ my_stack.cloudformation[stack_name].stack_outputs.MinikubeServerAddress }}'
       groups: just_created
 
 # Create K8s cluster

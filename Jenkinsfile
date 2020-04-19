@@ -6,7 +6,7 @@ pipeline {
         STACK_NAME   = "minikube-${env.BRANCH_NAME}"
         SERVER_ENV  = "minikube-${env.BRANCH_NAME}"        
         DOCKER_REPO = "jralonso/hello-nodeapp"
-        DOCKER_TAG  = "${env.BRANCH_NAME}-latest"
+        DOCKER_TAG  = "latest"
         DOCKER_CREDS = credentials('dockerhub-credentials')
         AWS_REGION   = "us-west-2"
         AWS_CREDS    = "aws_jenkins"

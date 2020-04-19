@@ -16,7 +16,7 @@
   - debug: var=is_deployed
 
   - name: Create deployment (only if was not deployed)
-    shell: kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:master-latest
+    shell: kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:latest
     register: create_deployment
     become: yes
     when: "'NotFound' in is_deployed.stderr"
@@ -25,7 +25,7 @@
   - debug: var=create_deployment
 
   - name: Update deployment (only if was deployed)
-    shell: kubectl set image deployments/hello-nodeapp hello-nodeapp=jralonso/hello-nodeapp:master-latest
+    shell: kubectl set image deployments/hello-nodeapp hello-nodeapp=jralonso/hello-nodeapp:latest
     register: update_deployment
     become: yes
     when: "'NotFound' not in is_deployed.stderr"

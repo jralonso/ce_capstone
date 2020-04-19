@@ -2,8 +2,10 @@
 # Get cloudformation info
 - name: Get cloudformation info from stack
   cloudformation_info:
-    stack_name: "{{ stack_name }}"
+    stack_name: '{{ stack_name }}'
+    all_facts: yes
   register: my_stack
+  failed_when: cloudformation['{{ stack_name }}'] is undefined
 
 - debug:
     msg: "{{ my_stack.cloudformation[stack_name].stack_outputs }}"

@@ -53,7 +53,7 @@ pipeline {
             }
         }
 
-        stage('Update cfn param file with green/blue branch')
+        stage('Update cfn param file with green/blue branch') {
             steps {
                 variableReplace(
                     configs: [
@@ -72,6 +72,7 @@ pipeline {
                     ]
                 )
             }
+        }
 
         stage('Create/Update Network and Server for the environment') {
             steps {

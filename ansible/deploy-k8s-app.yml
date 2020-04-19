@@ -6,14 +6,14 @@
 - name: Create or redeploy on K8s minikube 
   hosts: just_created
   tasks:
-  # - name: Check if app is deployed
-  #   shell: kubectl get deployment hello-node
-  #   register: deployed
-  #   ignore_errors: yes
+  - name: Check if app is deployed
+    shell: kubectl get deployment hello-nodeapp
+    register: deployed
+    ignore_errors: yes
   
-  # - debug: var=deployed.stdout_lines
+  - debug: var=deployed.stdout_lines
 
-  # - debug: var=deployed
+  - debug: var=deployed
 
   - name: Create deployment
     shell: /usr/local/bin/kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:master-latest
@@ -26,7 +26,14 @@
   - debug: var=deployment
 
   # - name: Update deployment
-  #   shell: /usr/local/bin/kubectl set image deployments/hello-node hello-node=jocatalin/kubernetes-bootcamp:v2  
+  #   shell: /usr/local/bin/kubectl set image deployments/hello-nodeapp hello-nodeapp=jralonso/hello-nodeapp:master-latest
+  #   register: deployment
+  #   become: yes
+  #   ignore_errors: yes
+
+  # - debug: var=deployment.stdout_lines
+  
+  # - debug: var=deployment
 
   - name: Expose deployment
     shell: /usr/local/bin/kubectl expose deployment hello-nodeapp --type=LoadBalancer --port=5000

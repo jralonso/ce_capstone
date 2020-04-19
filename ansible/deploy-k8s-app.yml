@@ -19,7 +19,7 @@
     shell: kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:master-latest
     register: create_deployment
     become: yes
-    when: "'FAILED' in is_deployed.stderr"
+    when: "'NotFound' in is_deployed.stderr"
 
   - debug: var=create_deployment.stdout_lines  
   - debug: var=create_deployment
@@ -28,7 +28,7 @@
     shell: kubectl set image deployments/hello-nodeapp hello-nodeapp=jralonso/hello-nodeapp:master-latest
     register: update_deployment
     become: yes
-    when: "'FAILED' not in is_deployed.stderr"
+    when: "'NotFound' not in is_deployed.stderr"
     #ignore_errors: yes
 
   - debug: var=update_deployment.stdout_lines  
@@ -38,7 +38,7 @@
     shell: /usr/local/bin/kubectl expose deployment hello-nodeapp --type=LoadBalancer --port=5000
     register: expose
     become: yes
-    when: "'FAILED' in is_deployed.stderr"
+    when: "'NotFound' in is_deployed.stderr"
 
   - debug: var=expose.stdout_lines
 

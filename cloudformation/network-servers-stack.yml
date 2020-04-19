@@ -40,6 +40,13 @@ Parameters:
     Description: Public IP to assign to the environment
     Type: String
 
+Mappings:
+  IPallocations:
+    allocations:
+      green: eipalloc-0481a19a8078ba263
+      blue: eipalloc-0deb8255314477a44
+      master: eipalloc-0c81fbcd7406981b8
+
 Resources:
 
   # #############################################
@@ -138,6 +145,10 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: !Ref MyJenkinsIP 
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref MylocalIP
       SecurityGroupEgress:
           # ALL egress ports allowed everywhere
         - IpProtocol: tcp
@@ -170,8 +181,12 @@ Resources:
   MinikubePublicIP:
     Type: AWS::EC2::EIPAssociation
     Properties:
-      AllocationId: !Ref MinikubeIPAlloc
+      # AllocationId: !Ref MinikubeIPAlloc
+      AllocationId: !FindInMap [IPallocations, "allocations", !Ref MinikubeIPAlloc]
       InstanceId: !Ref MinikubeServer
+
+
+
 
 Outputs:
 

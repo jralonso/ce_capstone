@@ -29,6 +29,6 @@
     },
     {
         "ParameterKey": "MinikubeIPAlloc",
-        "ParameterValue": "eipalloc-0481a19a8078ba263"
+        "ParameterValue": "#{GREENBLUE}#"
     }
 ]

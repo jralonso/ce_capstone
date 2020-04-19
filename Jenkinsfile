@@ -53,6 +53,26 @@ pipeline {
             }
         }
 
+        stage('Update cfn param file with green/blue branch')
+            steps {
+                variableReplace(
+                    configs: [
+                        variablesReplaceConfig(
+                            configs: [
+                                variablesReplaceItemConfig( 
+                                    name: 'GREENBLUE',
+                                    value: "${env.BRANCH_NAME}"
+                                )
+                            ],
+                            fileEncoding: 'UTF-8', 
+                            filePath: "${CFN_PARAMS}", 
+                            variablesPrefix: '#{', 
+                            variablesSuffix: '}#'
+                        )
+                    ]
+                )
+            }
+
         stage('Create/Update Network and Server for the environment') {
             steps {
                 withAWS(region: "${AWS_REGION}", credentials: "${AWS_CREDS}") {                    

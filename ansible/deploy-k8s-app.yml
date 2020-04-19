@@ -31,13 +31,14 @@
     when: "'NotFound' not in is_deployed.stderr"
     #ignore_errors: yes
 
+  # - debug: var=update_deployment.stdout_lines  
   - debug: var=update_deployment
 
   - name: Escale replicas to 4
     shell: kubectl scale deployment hello-nodeapp --replicas=4
     register: scale_deployment
     become: yes    
-
+    
   - debug: var=scale_deployment
 
   - name: Expose deployment (only if was not deployed)

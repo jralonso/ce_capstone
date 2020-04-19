@@ -36,7 +36,7 @@
   - debug: var=desc.stdout_lines
 
   - name: Get exposed host port
-    shell: "kubectl get services/hello-nodeapp -o go-template='{{ '{{' }}(index .spec.ports 0).nodePort{{ '}}' }}'"
+    shell: "kubectl get services/{{ app_name }} -o go-template='{{ '{{' }}(index .spec.ports 0).nodePort{{ '}}' }}'"
     register: port
     become: yes
 
@@ -62,8 +62,12 @@
 
 # Configure nginx reverse proxy
 - name: Configure nginx front proxy
+  vars:
+    nginx_path: /etc/nginx
+    nginx_sites: "{{ nginx_path }}/sites-available"
   hosts: localhost  
-  tasksk:
+  
+  tasks:
   - set_fact:
     minikube_server: "{{ new_server }}"
      

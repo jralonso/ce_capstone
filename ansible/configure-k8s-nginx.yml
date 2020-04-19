@@ -36,7 +36,7 @@
   - debug: var=desc.stdout_lines
 
   - name: Get exposed host port
-    shell: "kubectl get services/hello-node -o go-template='{{ '{{' }}(index .spec.ports 0).nodePort{{ '}}' }}'"
+    shell: "kubectl get services/hello-nodeapp -o go-template='{{ '{{' }}(index .spec.ports 0).nodePort{{ '}}' }}'"
     register: port
     become: yes
 

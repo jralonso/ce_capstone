@@ -6,40 +6,45 @@
 - name: Create or redeploy on K8s minikube 
   hosts: just_created
   tasks:
-  - name: Check if app is deployed
-    shell: kubectl get deployment hello-node
-    register: deployed
-    ignore_errors: yes
+  # - name: Check if app is deployed
+  #   shell: kubectl get deployment hello-node
+  #   register: deployed
+  #   ignore_errors: yes
   
-  - debug: var=deployed.stdout_lines
+  # - debug: var=deployed.stdout_lines
 
-  - debug: var=deployed
+  # - debug: var=deployed
 
   - name: Create deployment
-    shell: /usr/local/bin/kubectl create deployment hello-node --image=gcr.io/hello-minikube-zero-install/hello-node 
-    register: kubectl
+    shell: /usr/local/bin/kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:master-latest
+    register: deployment
     become: yes
-    # when: kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}' 
+    ignore_errors: yes
 
-  - debug: var=kubectl.stdout_lines
+  - debug: var=deployment.stdout_lines
+  
+  - debug: var=deployment
+
+  # - name: Update deployment
+  #   shell: /usr/local/bin/kubectl set image deployments/hello-node hello-node=jocatalin/kubernetes-bootcamp:v2  
 
   - name: Expose deployment
-    shell: /usr/local/bin/kubectl expose deployment hello-node --type=LoadBalancer --port=8080
-    register: kubectl
+    shell: /usr/local/bin/kubectl expose deployment hello-nodeapp --type=LoadBalancer --port=5000
+    register: expose
     become: yes
 
-  - debug: var=kubectl.stdout_lines
+  - debug: var=expose.stdout_lines
 
-  - name: Get services
-    shell: /usr/local/bin/kubectl get services
-    register: kubectl
+  - name: Describe service
+    shell: /usr/local/bin/kubectl describe service hello-nodeapp
+    register: service
     become: yes
 
-  - debug: var=kubectl.stdout_lines
+  - debug: var=service.stdout_lines
 
-  - name: Publish service
-    shell: /usr/local/bin/minikube service hello-node
-    register: minikube 
-    become: yes
+  # - name: Publish service
+  #   shell: /usr/local/bin/minikube service hello-node
+  #   register: publishing 
+  #   become: yes
 
-  - debug: var=kubectl.stdout_lines
+  # - debug: var=publishing.stdout_lines

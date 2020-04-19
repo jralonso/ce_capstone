@@ -5,8 +5,9 @@ pipeline {
     environment {
         STACK_NAME   = "minikube-${env.BRANCH_NAME}"
         SERVER_ENV  = "minikube-${env.BRANCH_NAME}"        
-        DOCKER_REPO = "jralonso/hello-nodeapp"
-        DOCKER_TAG  = "latest"
+        DOCKER_APP = "jralonso/hello-nodeapp"
+        DOCKER_TAG  = "0.2"
+        DOCKER_IMG  = "${DOCKER_APP}/${DOCKER_TAG}"
         DOCKER_CREDS = credentials('dockerhub-credentials')
         AWS_REGION   = "us-west-2"
         AWS_CREDS    = "aws_jenkins"
@@ -61,7 +62,7 @@ pipeline {
         stage('Build Docker image') {
             steps {
                 sh 'echo "Building docker image"'
-                sh 'docker build -t ${DOCKER_REPO}:${DOCKER_TAG} .'
+                sh 'docker build -t ${DOCKER_IMG} .'
             }
         }        
         
@@ -70,7 +71,7 @@ pipeline {
                 // sh 'echo "Service user is $DOCKER_CREDS_USR"'
                 // sh 'echo "Service password is $DOCKER_CREDS_PSW"'
                 sh 'docker login --username=$DOCKER_CREDS_USR --password=$DOCKER_CREDS_PSW'
-                sh 'docker push ${DOCKER_REPO}:${DOCKER_TAG}'
+                sh 'docker push ${DOCKER_IMG}'
             }
         }
 
@@ -110,7 +111,8 @@ pipeline {
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
-                        stack_name: "${STACK_NAME}"
+                        stack_name: "${STACK_NAME}",
+                        image: "${DOCKER_IMG}"
                         ]
                     ) 
                 }                

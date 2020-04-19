@@ -16,9 +16,6 @@
   - debug:
       msg: "Minikube server: {{ my_stack.cloudformation[stack_name].stack_outputs.MinikubeServerAddress }}"
 
-  - debug:
-      msg: '{{ target }}'
-
 # Add found hosts to inventory
 - name: Add just created hosts to dynamic in memory inventory
   hosts: localhost

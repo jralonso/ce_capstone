@@ -10,8 +10,12 @@ const HOST = '0.0.0.0';
 // App
 const app = express();
 app.get('/', (req, res) => {
-  res.send('Hello ' + req.query.name);
+  res.send('<html><body><h1>Hello ' + req.query.name + ' </h1> | Pod: ' + process.env.HOSTNAME);
 });
+
+//app.get('/server', (req, res) => {
+//  res.send(`Running on http://${HOST}:${PORT}`);
+//});
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);

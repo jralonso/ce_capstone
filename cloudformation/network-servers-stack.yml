@@ -12,6 +12,10 @@ Parameters:
   MylocalIP: 
     Description: My local IP
     Type: String
+  
+  MyOtherlocalIP: 
+    Description: My Other local IP
+    Type: String
 
   MyJenkinsIP:
     Description: My Jenkins IP
@@ -39,13 +43,6 @@ Parameters:
   MinikubeIPAlloc: 
     Description: Public IP to assign to the environment
     Type: String
-
-Mappings:
-  IPallocations:
-    allocations:
-      green: eipalloc-0c81fbcd7406981b8
-      blue: eipalloc-0deb8255314477a44
-      master: eipalloc-0481a19a8078ba263
 
 Resources:
 
@@ -135,20 +132,33 @@ Resources:
       GroupDescription: Allow SSH, PING and TCP 5000 ingress and all traffic from Bastion Host to Internet
       VpcId: !Ref myVPC
       SecurityGroupIngress:
-          # Rule for Bastion host
+          # Rule for Bastion(s) host
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: !Ref MylocalIP
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MyOtherlocalIP
           # Rule for Jenkins host
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: !Ref MyJenkinsIP 
+          CidrIp: !Ref MyJenkinsIP
+          # Rule for receiving access via front proxy
+        # - IpProtocol: tcp
+        #   FromPort: 80
+        #   ToPort: 80
+        #   CidrIp: !Ref MylocalIP
+        # - IpProtocol: tcp
+        #   FromPort: 80
+        #   ToPort: 80
+        #   CidrIp: !Ref MyOtherlocalIP
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: !Ref MylocalIP
+          CidrIp: !Ref MyJenkinsIP
       SecurityGroupEgress:
           # ALL egress ports allowed everywhere
         - IpProtocol: tcp
@@ -177,16 +187,6 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName} Minikube Server Host (Ubuntu 18.04)       
-
-  MinikubePublicIP:
-    Type: AWS::EC2::EIPAssociation
-    Properties:
-      # AllocationId: !Ref MinikubeIPAlloc
-      AllocationId: !FindInMap [IPallocations, "allocations", !Ref MinikubeIPAlloc]
-      InstanceId: !Ref MinikubeServer
-
-
-
 
 Outputs:
 

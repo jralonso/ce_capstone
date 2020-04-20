@@ -7,7 +7,7 @@
   hosts: just_created
   tasks:
   - name: Check if app is deployed
-    shell: kubectl get deployment hello-nodeapp
+    shell: "kubectl get deployment {{ app_name }}"
     register: is_deployed
     become: yes
     ignore_errors: yes
@@ -16,7 +16,7 @@
   - debug: var=is_deployed
 
   - name: Create deployment (only if was not deployed)
-    shell: kubectl create deployment hello-nodeapp --image=jralonso/hello-nodeapp:master-latest
+    shell: "kubectl create deployment {{ app_name }} --image={{ image }}"
     register: create_deployment
     become: yes
     when: "'NotFound' in is_deployed.stderr"
@@ -25,7 +25,7 @@
   - debug: var=create_deployment
 
   - name: Update deployment (only if was deployed)
-    shell: kubectl set image deployments/hello-nodeapp hello-nodeapp=jralonso/hello-nodeapp:master-latest
+    shell: "kubectl set image deployments/{{ app_name }} {{ app_name }}={{ image }}"
     register: update_deployment
     become: yes
     when: "'NotFound' not in is_deployed.stderr"
@@ -35,14 +35,14 @@
   - debug: var=update_deployment
 
   - name: Escale replicas to 4
-    shell: kubectl scale deployment hello-nodeapp --replicas=4
+    shell: "kubectl scale deployment {{ app_name }} --replicas=4"
     register: scale_deployment
     become: yes    
     
   - debug: var=scale_deployment
 
   - name: Expose deployment (only if was not deployed)
-    shell: /usr/local/bin/kubectl expose deployment hello-nodeapp --type=LoadBalancer --port=5000
+    shell: "kubectl expose deployment {{ app_name }} --type=LoadBalancer --port=5000"
     register: expose
     become: yes
     when: "'NotFound' in is_deployed.stderr"

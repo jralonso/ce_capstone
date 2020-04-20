@@ -3,10 +3,12 @@ pipeline {
 
     // to-do: Security Testing with Aqua
     environment {
-        STACK_NAME   = "minikube-${env.BRANCH_NAME}"
-        SERVER_ENV  = "minikube-${env.BRANCH_NAME}"        
-        DOCKER_REPO = "jralonso/hello-nodeapp"
-        DOCKER_TAG  = "${env.BRANCH_NAME}-latest"
+        APP_NAME   = "hello-nodeapp"       
+        DOCKER_APP = "jralonso/hello-nodeapp"
+        TAG  = "0.3"
+        DOCKER_IMG  = "${DOCKER_APP}:${TAG}"
+        STACK_NAME = "minikube-${env.BRANCH_NAME}"
+        SERVER_ENV = "minikube-${env.BRANCH_NAME}" 
         DOCKER_CREDS = credentials('dockerhub-credentials')
         AWS_REGION   = "us-west-2"
         AWS_CREDS    = "aws_jenkins"
@@ -23,27 +25,26 @@ pipeline {
     
     stages {
 
-        stage('Update cfn param file with green/blue branch') {
-            steps {
-                sh 'echo "Update cfn param file with green/blue branch"'
-                contentReplace(
-                    configs: [
-                        variablesReplaceConfig(
-                            configs: [
-                                variablesReplaceItemConfig( 
-                                    name: 'GREENBLUE',
-                                    value: "${env.BRANCH_NAME}"
-                                )
-                            ],
-                            fileEncoding: 'UTF-8', 
-                            filePath: "${CFN_PARAMS}", 
-                            variablesPrefix: '#{', 
-                            variablesSuffix: '}#'
-                        )
-                    ]
-                )
-            }
-        }
+        // stage('Update cfn param file with green/blue branch') {
+        //     steps {
+        //         contentReplace(
+        //             configs: [
+        //                 variablesReplaceConfig(
+        //                     configs: [
+        //                         variablesReplaceItemConfig( 
+        //                             name: 'GREENBLUE',
+        //                             value: "${env.BRANCH_NAME}"
+        //                         )
+        //                     ],
+        //                     fileEncoding: 'UTF-8', 
+        //                     filePath: "${CFN_PARAMS}", 
+        //                     variablesPrefix: '#{', 
+        //                     variablesSuffix: '}#'
+        //                 )
+        //             ]
+        //         )
+        //     }
+        // }
         
         stage('Lint Node App') {
             steps {         
@@ -62,7 +63,7 @@ pipeline {
         stage('Build Docker image') {
             steps {
                 sh 'echo "Building docker image"'
-                sh 'docker build -t ${DOCKER_REPO}:${DOCKER_TAG} .'
+                sh 'docker build -t ${DOCKER_APP}:${TAG} .'
             }
         }        
         
@@ -71,7 +72,7 @@ pipeline {
                 // sh 'echo "Service user is $DOCKER_CREDS_USR"'
                 // sh 'echo "Service password is $DOCKER_CREDS_PSW"'
                 sh 'docker login --username=$DOCKER_CREDS_USR --password=$DOCKER_CREDS_PSW'
-                sh 'docker push ${DOCKER_REPO}:${DOCKER_TAG}'
+                sh 'docker push ${DOCKER_APP}:${TAG}'
             }
         }
 
@@ -128,7 +129,9 @@ pipeline {
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
-                        stack_name: "${STACK_NAME}"
+                        stack_name: "${STACK_NAME}",
+                        image: "${DOCKER_IMG}",
+                        app_name: "${APP_NAME}"
                         ]
                     ) 
                 }                
@@ -143,7 +146,8 @@ pipeline {
                     credentialsId: "${ANSIB_CREDS}",
                     colorized: true,
                     extraVars: [
-                        stack_name: "${STACK_NAME}"
+                        stack_name: "${STACK_NAME}",
+                        app_name: "${APP_NAME}"
                         ]
                     ) 
                 }                

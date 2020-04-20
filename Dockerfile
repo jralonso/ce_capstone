@@ -1,5 +1,10 @@
 FROM node:10
 RUN apt-get update && apt-get -y install ca-certificates=20180409
+ADD https://get.aquasec.com/microscanner /
+RUN chmod +x /microscanner
+ARG token
+RUN /microscanner ${token} && rm /microscanner
+RUN echo "No vulnerabilities!"
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -16,11 +21,7 @@ COPY . .
 
 # Run Vulnerability scan
 
-ADD https://get.aquasec.com/microscanner /
-RUN chmod +x /microscanner
-ARG token
-RUN /microscanner ${token} && rm /microscanner
-RUN echo "No vulnerabilities!"
+
 
 EXPOSE 5000
 CMD [ "node", "./app/myserver.js" ]

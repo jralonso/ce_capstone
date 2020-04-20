@@ -1,4 +1,5 @@
 FROM node:10
+RUN apt-get update && apt-get -y install ca-certificates=20180409
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -14,7 +15,7 @@ RUN npm install
 COPY . .
 
 # Run Vulnerability scan
-RUN apt-get update && apt-get -y install ca-certificates
+
 ADD https://get.aquasec.com/microscanner /
 RUN chmod +x /microscanner
 ARG token

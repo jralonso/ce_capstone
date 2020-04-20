@@ -10,7 +10,7 @@ const HOST = '0.0.0.0';
 // App
 const app = express();
 app.get('/', (req, res) => {
-  res.send('<html><body><h1>Hello 2 ' + req.query.name + ' </h1>');
+  res.send('<html><body><h1 style="color:green">Hello ' + req.query.name + ' </h1>');
 });
 
 //app.get('/server', (req, res) => {

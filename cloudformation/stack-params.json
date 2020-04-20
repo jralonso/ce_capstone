@@ -8,6 +8,10 @@
         "ParameterValue": "188.26.223.214/32"
     },
     {
+        "ParameterKey": "MyOtherlocalIP",
+        "ParameterValue": "91.223.129.17/32"
+    },
+    {
         "ParameterKey": "KeyPair",
         "ParameterValue": "udacityTestEC2"
     },

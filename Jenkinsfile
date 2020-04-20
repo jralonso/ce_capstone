@@ -56,7 +56,7 @@ pipeline {
         stage('Lint Dockerfile') {
             steps {
                 sh 'echo "Lint Dockerfile"'
-                sh 'docker run --rm -i hadolint/hadolint < Dockerfile'
+                sh 'docker run --rm -i hadolint/hadolint < Dockerfile'                
             }
         }
 
@@ -65,8 +65,15 @@ pipeline {
                 sh 'echo "Building docker image"'
                 sh 'docker build -t ${DOCKER_APP}:${TAG} .'
             }
-        }        
-        
+        } 
+
+        stage('Docker vulnerability scan with Aqua Microscanner') {
+            steps {
+                sh 'echo "Scanning docker image"'
+                aquaMicroscanner(imageName:"${DOCKER_APP}:${TAG}", notCompliesCmd:'exit 1', onDisallowed:'fail', outputFormat:'html' ) 
+            }
+        }       
+
         stage('Push image to registry') {
             steps {
                 // sh 'echo "Service user is $DOCKER_CREDS_USR"'

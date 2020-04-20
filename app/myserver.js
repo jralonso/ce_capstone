@@ -1,6 +1,7 @@
 /* global require */
 'use strict';
-
+var os = require("os");
+var hostname = os.hostname();
 const express = require('express');
 
 // Constants

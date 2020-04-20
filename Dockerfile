@@ -13,5 +13,13 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+# Run Vulnerability scan
+RUN apt-get update && apt-get -y install ca-certificates
+ADD https://get.aquasec.com/microscanner /
+RUN chmod +x /microscanner
+ARG token
+RUN /microscanner ${token} && rm /microscanner
+RUN echo "No vulnerabilities!"
+
 EXPOSE 5000
 CMD [ "node", "./app/myserver.js" ]

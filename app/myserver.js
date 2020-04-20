@@ -2,7 +2,7 @@
 'use strict';
 var os = require("os");
 var hostname = os.hostname();
-const express = require(');
+const express = require('express');
 
 // Constants
 const PORT = 5000;

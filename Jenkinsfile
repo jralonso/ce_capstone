@@ -60,30 +60,16 @@ pipeline {
             }
         }
 
-        stage('Build Docker image') {
+        stage('Build Docker image and push to registry') {
             steps {
                 sh 'echo "Building docker image"'
-                sh 'docker build -t ${DOCKER_APP}:${TAG} .'
-            }
-        } 
-
-        stage('Docker vulnerability scan with Aqua Microscanner') {
-            steps {
-                sh 'echo "Scanning docker image"'
-                aquaMicroscanner(imageName:"${DOCKER_APP}:${TAG}", notCompliesCmd:'exit 1', onDisallowed:'fail', outputFormat:'html' ) 
-            }
-        }       
-
-        stage('Push image to registry') {
-            steps {
-                // sh 'echo "Service user is $DOCKER_CREDS_USR"'
-                // sh 'echo "Service password is $DOCKER_CREDS_PSW"'
+                withCredentials([string(credentialsId: 'aqua_token', variable: 'Secret')]) {
+                    sh 'docker build --build-arg token=$Secret -t ${DOCKER_APP}:${TAG} .'
+                }                
                 sh 'docker login --username=$DOCKER_CREDS_USR --password=$DOCKER_CREDS_PSW'
                 sh 'docker push ${DOCKER_APP}:${TAG}'
             }
-        }
-
-
+        }    
 
         stage('Create/Update Network and Server for the environment') {
             steps {

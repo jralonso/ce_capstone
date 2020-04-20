@@ -1,5 +1,5 @@
 FROM node:10
-RUN apt-get update && apt-get -y install ca-certificates=20180409
+RUN apt-get update && apt-get --no-install-recommends -y install ca-certificates=20180409
 ADD https://get.aquasec.com/microscanner /
 RUN chmod +x /microscanner
 ARG token

@@ -1,12 +1,4 @@
 FROM node:10
-RUN apt-get update && apt-get --no-install-recommends -y install ca-certificates=20180409 \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-ADD https://get.aquasec.com/microscanner /
-RUN chmod +x /microscanner
-ARG token
-RUN /microscanner ${token} && rm /microscanner
-RUN echo "No vulnerabilities!"
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -20,10 +12,6 @@ RUN npm install
 
 # Bundle app source
 COPY . .
-
-# Run Vulnerability scan
-
-
 
 EXPOSE 5000
 CMD [ "node", "./app/myserver.js" ]

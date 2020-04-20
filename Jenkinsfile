@@ -25,47 +25,19 @@ pipeline {
     
     stages {
 
-        // stage('Update cfn param file with green/blue branch') {
-        //     steps {
-        //         contentReplace(
-        //             configs: [
-        //                 variablesReplaceConfig(
-        //                     configs: [
-        //                         variablesReplaceItemConfig( 
-        //                             name: 'GREENBLUE',
-        //                             value: "${env.BRANCH_NAME}"
-        //                         )
-        //                     ],
-        //                     fileEncoding: 'UTF-8', 
-        //                     filePath: "${CFN_PARAMS}", 
-        //                     variablesPrefix: '#{', 
-        //                     variablesSuffix: '}#'
-        //                 )
-        //             ]
-        //         )
-        //     }
-        // }
-        
-        stage('Lint Node App') {
+        stage('Lint Node App and Dockerfile') {
             steps {         
                 sh 'echo "Lint node app"'       
                 sh "eslint 'app/**/*.js?(x)'"
+                sh 'echo "Lint Dockerfile"'
+                sh 'docker run --rm -i hadolint/hadolint < Dockerfile'    
             }
         }
         
-        stage('Lint Dockerfile') {
-            steps {
-                sh 'echo "Lint Dockerfile"'
-                sh 'docker run --rm -i hadolint/hadolint < Dockerfile'                
-            }
-        }
-
         stage('Build Docker image and push to registry') {
             steps {
                 sh 'echo "Building docker image"'
-                withCredentials([string(credentialsId: 'aqua_token', variable: 'Secret')]) {
-                    sh 'docker build --build-arg token=$Secret -t ${DOCKER_APP}:${TAG} .'
-                }                
+                sh 'docker build -t ${DOCKER_APP}:${TAG} .'
                 sh 'docker login --username=$DOCKER_CREDS_USR --password=$DOCKER_CREDS_PSW'
                 sh 'docker push ${DOCKER_APP}:${TAG}'
             }
@@ -114,7 +86,7 @@ pipeline {
             }
         }
 
-        stage('Configure K8s ngins proxy') {
+        stage('Configure reverse proxy') {
             steps {ansiColor('xterm') {
                 ansiblePlaybook( 
                     playbook: "${CONFIG_K8S_PROXY}",
@@ -129,14 +101,6 @@ pipeline {
                 }                
             }
         }
-        
-        // stage('Delete Minikube Stack') {
-        //     steps {
-        //         withAWS(region: 'us-west-2', credentials: 'aws_jenkins') {
-        //             sh 'echo "Deleting Minikube stack"'
-        //             cfnDelete(stack:'minikube01')
-        //         }
-        //     }
-        // }
+
     }
 }

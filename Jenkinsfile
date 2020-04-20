@@ -5,7 +5,7 @@ pipeline {
     environment {
         APP_NAME   = "hello-nodeapp"       
         DOCKER_APP = "jralonso/hello-nodeapp"
-        TAG  = "0.4"
+        TAG  = "${BUILD_TAG}"
         DOCKER_IMG  = "${DOCKER_APP}:${TAG}"
         STACK_NAME = "minikube-${env.BRANCH_NAME}"
         SERVER_ENV = "minikube-${env.BRANCH_NAME}" 
